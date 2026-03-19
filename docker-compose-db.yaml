@@ -2,7 +2,7 @@ name: tooljet-app
 
 services:
   tooljet:
-    image: tooljet/tooljet:ee-lts-latest
+    image: tooljet/tooljet-ce:ce-lts-latest
     platform: linux/amd64
     restart: always
     environment:
@@ -15,16 +15,9 @@ services:
       - PG_USER=$SERVICE_USER_POSTGRES
       - PG_PASS=$SERVICE_PASSWORD_POSTGRES
       - PG_DB=${POSTGRES_DB:-tooljet}
-      - TOOLJET_DB_USER=$SERVICE_USER_POSTGRES
-      - TOOLJET_DB_PASS=$SERVICE_PASSWORD_POSTGRES
-      - TOOLJET_DB_HOST=postgresql
-      - TOOLJET_DB_PORT=5432
-      - TOOLJET_DB=${TOOLJET_DB:-tooljet_db}
-      - PGRST_JWT_SECRET=$SERVICE_PASSWORD_SECRET
       - SECRET_KEY_BASE=$SERVICE_PASSWORD_SECRET
       - LOCKBOX_MASTER_KEY=$SERVICE_PASSWORD_LOCKBOX
       - NODE_ENV=production
-      - ENABLE_TOOLJET_DB=false
     depends_on:
       postgresql:
         condition: service_healthy
