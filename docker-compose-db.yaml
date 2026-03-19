@@ -5,6 +5,8 @@ services:
     image: tooljet/tooljet-ce:ce-lts-latest
     platform: linux/amd64
     restart: always
+    expose:
+      - "80"
     environment:
       - SERVICE_FQDN_TOOLJET_80
       - TOOLJET_HOST=$SERVICE_URL_TOOLJET
