@@ -6,15 +6,15 @@ services:
     platform: linux/amd64
     restart: always
     environment:
-      - SERVICE_URL_TOOLJET_80
+      - SERVICE_FQDN_TOOLJET_80
       - TOOLJET_HOST=$SERVICE_URL_TOOLJET
       - SERVE_CLIENT=true
       - PORT=80
-      - DB_HOST=postgresql
-      - DB_PORT=5432
-      - DB_USER=$SERVICE_USER_POSTGRES
-      - DB_PASS=$SERVICE_PASSWORD_POSTGRES
-      - DB_NAME=${POSTGRES_DB:-tooljet}
+      - PG_HOST=postgresql
+      - PG_PORT=5432
+      - PG_USER=$SERVICE_USER_POSTGRES
+      - PG_PASS=$SERVICE_PASSWORD_POSTGRES
+      - PG_DB=${POSTGRES_DB:-tooljet}
       - SECRET_KEY_BASE=$SERVICE_PASSWORD_SECRET
       - LOCKBOX_MASTER_KEY=$SERVICE_PASSWORD_LOCKBOX
       - NODE_ENV=production
