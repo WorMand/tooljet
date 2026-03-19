@@ -22,9 +22,13 @@ services:
       - PGRST_JWT_SECRET=$SERVICE_PASSWORD_SECRET
       - SECRET_KEY_BASE=$SERVICE_PASSWORD_SECRET
       - LOCKBOX_MASTER_KEY=$SERVICE_PASSWORD_LOCKBOX
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - NODE_ENV=production
     depends_on:
       postgresql:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     command: npm run start:prod
 
@@ -43,6 +47,18 @@ services:
         - pg_isready -U postgres -d tooljet_production
       interval: 5s
       timeout: 20s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      interval: 5s
+      timeout: 10s
       retries: 10
 
 volumes:
