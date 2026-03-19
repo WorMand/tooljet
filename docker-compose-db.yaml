@@ -10,22 +10,22 @@ services:
       - TOOLJET_HOST=$SERVICE_URL_TOOLJET
       - SERVE_CLIENT=true
       - PORT=80
-      # Ana uygulama DB
       - PG_HOST=postgresql
       - PG_PORT=5432
       - PG_USER=$SERVICE_USER_POSTGRES
       - PG_PASS=$SERVICE_PASSWORD_POSTGRES
       - PG_DB=${POSTGRES_DB:-tooljet}
-      # ToolJet DB (PostgREST) — AYRI sabit kullanıcı
-      - TOOLJET_DB_USER=tj_db_user        # ← SABİT değer, random değil
-      - TOOLJET_DB_PASS=$SERVICE_PASSWORD_POSTGRES
+      - TOOLJET_DB_USER=$SERVICE_USER_POSTGRES      # ← PG_USER ile AYNI olmalı
+      - TOOLJET_DB_PASS=$SERVICE_PASSWORD_POSTGRES  # ← PG_PASS ile AYNI olmalı
       - TOOLJET_DB_HOST=postgresql
       - TOOLJET_DB_PORT=5432
       - TOOLJET_DB=tooljet_db
       - PGRST_JWT_SECRET=$SERVICE_PASSWORD_SECRET
+      - PGRST_HOST=postgrest                        # ← YENİ
+      - PGRST_DB_URI=postgres://$SERVICE_USER_POSTGRES:$SERVICE_PASSWORD_POSTGRES@postgresql/tooljet_db  # ← YENİ
       - SECRET_KEY_BASE=$SERVICE_PASSWORD_SECRET
       - LOCKBOX_MASTER_KEY=$SERVICE_PASSWORD_LOCKBOX
-      - ENABLE_TOOLJET_DB=true
+      - ENABLE_TOOLJET_DB=false                     # ← TEKRAR false yap (en temiz çözüm)
       - NODE_ENV=production
     depends_on:
       postgresql:
