@@ -24,6 +24,7 @@ services:
       - SECRET_KEY_BASE=$SERVICE_PASSWORD_SECRET
       - LOCKBOX_MASTER_KEY=$SERVICE_PASSWORD_LOCKBOX
       - NODE_ENV=production
+      - ENABLE_TOOLJET_DB=false
     depends_on:
       postgresql:
         condition: service_healthy
