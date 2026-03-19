@@ -1,42 +1,51 @@
-name: Tooljet app
+name: tooljet-app
 
 services:
   tooljet:
-    tty: true
-    stdin_open: true
-    container_name: Tooljet-app
     image: tooljet/tooljet:ee-lts-latest
     platform: linux/amd64
     restart: always
-    env_file: .env
-    ports:
-      - 3000:3000
-    depends_on:
-      - postgres
     environment:
-      SERVE_CLIENT: "true"
-      PORT: "3000"
+      - SERVICE_URL_TOOLJET_80
+      - TOOLJET_HOST=$SERVICE_URL_TOOLJET
+      - SERVE_CLIENT=true
+      - PORT=80
+      - DB_HOST=postgresql
+      - DB_PORT=5432
+      - DB_USER=$SERVICE_USER_POSTGRES
+      - DB_PASS=$SERVICE_PASSWORD_POSTGRES
+      - DB_NAME=${POSTGRES_DB:-tooljet}
+      - SECRET_KEY_BASE=$SERVICE_PASSWORD_SECRET
+      - LOCKBOX_MASTER_KEY=$SERVICE_PASSWORD_LOCKBOX
+      - NODE_ENV=production
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget -qO- http://127.0.0.1:80/ || exit 1
+      interval: 10s
+      timeout: 30s
+      retries: 10
     command: npm run start:prod
 
-  postgres:
-    container_name: ${PG_HOST}
-    image: postgres:16
+  postgresql:
+    image: postgres:16-alpine
     restart: always
     volumes:
-      - postgres:/var/lib/postgresql/data
-    env_file: .env
+      - postgresql-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=${PG_USER}
-      - POSTGRES_PASSWORD=${PG_PASS}
-
+      - POSTGRES_USER=$SERVICE_USER_POSTGRES
+      - POSTGRES_PASSWORD=$SERVICE_PASSWORD_POSTGRES
+      - POSTGRES_DB=${POSTGRES_DB:-tooljet}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}
+      interval: 5s
+      timeout: 20s
+      retries: 10
 
 volumes:
-  postgres:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: ${PWD}/postgres_data
-  certs:
-  logs:
-  fallbackcerts:
+  postgresql-data:
